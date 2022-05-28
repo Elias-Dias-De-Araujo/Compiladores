@@ -1,0 +1,16 @@
+ID (a..z|A..Z)(A..Z|0..9|a..z)*
+INT int
+STRING string
+NUM (0..9)+
+WORD "(A..Z|0..9|a..z|blank)*"
+OP_ARITHMETIC =,+,-,*,/
+OP_RELATIONAL ==,!=,>,<,>=,<=
+L_PAREN (
+R_PAREN )
+L_BRACE {
+R_BRACE }
+SEMICOLON ;
+COMMA ,
+IF if
+ELSE else
+RETURN return

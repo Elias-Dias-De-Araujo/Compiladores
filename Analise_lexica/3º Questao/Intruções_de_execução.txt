@@ -1,0 +1,11 @@
+Todo estado final deve ter uma transição com "ε" que não irá levar para nenhum outro estado.
+
+Logo no inicio da main o nfa é criado e a maneira de adicionar novos estados nele é a seguinte
+
+key: Inteiro que representa o estado atual do nfa, no formato int
+caractere: Caracter a ser lido, no formato String
+estados: Estados alcançáveis a partir do estado atual lendo o caracter informado, no formato new int[]{}
+
+nfa.put(key, new Collections_transitions(new Transitions[] {
+            new Transitions(caractere, estados),
+}));

@@ -1,0 +1,16 @@
+No analisador em questão, basta apenas digitar o código de execução da linguagem A no arquivo "input.txt", localizado na
+src do projeto, após feito isso, basta apenas ir em App.java e dar run na main, assim a execução irá ocorrer com sucesso.
+
+Exemplo de execução: 
+input:
+int a = 2;
+int b = 2;
+string frase1 = " Ola Amigo ";
+if(a == b) {
+    string frase2 = "Os dois sao iguais";
+    return frase2 
+}
+
+output:
+INT ID OP_ARITHMETIC NUM SEMICOLON INT ID OP_ARITHMETIC NUM SEMICOLON STRING ID OP_ARITHMETIC WORD SEMICOLON IF L_PAREN ID OP_RELATIONAL ID R_PAREN L_BRACE 
+STRING ID OP_ARITHMETIC WORD SEMICOLON RETURN ID SEMICOLON R_BRACE
