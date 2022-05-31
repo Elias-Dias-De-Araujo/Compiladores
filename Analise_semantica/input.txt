@@ -1,0 +1,9 @@
+string fun ( string a , string b ) {
+    return a ;
+}
+
+int main ( ) {
+    string d = fun ( ) ;
+    int c = 5 ;
+    return c ;
+}
