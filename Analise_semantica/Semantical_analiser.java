@@ -8,12 +8,14 @@ public class Semantical_analiser {
     private int current = 1;
     private int s, subs = 0;
     private String row;
+    private boolean stringOpen = false;
     private int currentScope = 0;
     private boolean openedFunction = false;
     private boolean functionWasOpenned = false;
     private int cp = 0;
     private int cb = 0;
     private ArrayList<String>cutRow = new ArrayList<String>();
+    private ArrayList<Integer>elementsToBeRemove = new ArrayList<Integer>();
     private String currentFunction = "";
     private boolean scopeFunction = false;
     private boolean scopeScope = false;
@@ -31,7 +33,7 @@ public class Semantical_analiser {
 
     public void setRow(String currentRow) {
         String[] cut;
-        cut = currentRow.split(" ");
+        cut = currentRow.split("[ ](?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
         this.row = currentRow;
         this.cutRow.clear();
 
@@ -70,6 +72,8 @@ public class Semantical_analiser {
         boolean existVarReturn = false;
         HashMap<String, ArrayList<String>> nTVS = new HashMap<String, ArrayList<String>>();
         ArrayList<String> newSymbol = new ArrayList<String>();
+        Matcher matcherGlobalId = patternID.matcher(cutRow.get(current));
+        boolean matchFoundGlobalId = matcherGlobalId.find();
         if(cutRow.get(current).equals("")) {
             current+=1;
         }else if(cutRow.get(current).equals("return")){
@@ -106,8 +110,10 @@ public class Semantical_analiser {
                         boolean matchFoundId = matcherId.find();
 
                         char[] charBegin = cutRow.get(current).toCharArray();
-
-                        if(matchFoundId) {
+                        
+                        if (charBegin[0] == '"') {
+                            existVarReturn = true;
+                        }else if(matchFoundId) {
                             for (int i = scope; i >= 0; i--) {
                                 if(scopes.get(i).containsKey(cutRow.get(current))) {
                                     if(scopes.get(i).get(cutRow.get(current)).get(1).equals("int") 
@@ -119,10 +125,8 @@ public class Semantical_analiser {
                             }
                         }else if (matchFoundInt) {
                             existVarReturn = true;
-                        }else if (charBegin[0] == '"') {
-                            existVarReturn = true;
                         }
-
+                        
                         if(!existVarReturn) {
                             return false;
                         }
@@ -208,28 +212,87 @@ public class Semantical_analiser {
             currentScope+=1;
         }
         else if(cutRow.get(current).equals("if")) {
+            boolean existInTableWithType = false;
             current+=2;
-            if(!getCheckVariableAlone(scope)) {
-                return false;
+            cp = 1;
+            
+            while (cp > 0) {
+                Matcher matcherId = patternID.matcher(cutRow.get(current));
+                boolean matchFoundId = matcherId.find();
+
+                Matcher matcherInt = patternInt.matcher(cutRow.get(current));
+                boolean matchFoundInt = matcherInt.find();
+
+                char[] charBegin = cutRow.get(current).toCharArray();
+                if(charBegin[0] == '"' && charBegin[charBegin.length-1] == '"') {
+
+                }else if(matchFoundInt) {
+
+                }else if(matchFoundId) {
+                    for (int i = scope; i >= 0; i--) {
+                        if(scopes.get(i).containsKey(cutRow.get(current))) {
+                            if(
+                                scopes.get(i).get(cutRow.get(current)).get(1).equals("int") ||
+                                scopes.get(i).get(cutRow.get(current)).get(1).equals("string")) {
+                                existInTableWithType = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(!existInTableWithType) {
+                        return false;
+                    }
+                    existInTableWithType = false;
+                }else if(cutRow.get(current).equals(")")) {
+                    cp-=1;
+                }else if(cutRow.get(current).equals("(")) {
+                    cp+=1;
+                }
+                current+=1;
             }
-            current+=2;
-            if(!getCheckVariableAlone(scope)) {
-                return false;
-            }
-            current+=3;
+            current = max+1;
             cb+=1;
             scopes.add(nTVS);
             currentScope+=1;
-        }else if(cutRow.get(current).equals("else") && cutRow.get(current).equals("if")){
-            current+=2;
-            if(!getCheckVariableAlone(scope)) {
-                return false;
-            }
-            current+=2;
-            if(!getCheckVariableAlone(scope)) {
-                return false;
-            }
+        }else if(cutRow.get(current).equals("else") && cutRow.get(current+1).equals("if")){
+            boolean existInTableWithType = false;
             current+=3;
+            cp = 1;
+            
+            while (cp > 0) {
+                Matcher matcherId = patternID.matcher(cutRow.get(current));
+                boolean matchFoundId = matcherId.find();
+
+                Matcher matcherInt = patternInt.matcher(cutRow.get(current));
+                boolean matchFoundInt = matcherInt.find();
+
+                char[] charBegin = cutRow.get(current).toCharArray();
+                if(charBegin[0] == '"' && charBegin[charBegin.length-1] == '"') {
+
+                }else if(matchFoundInt) {
+
+                }else if(matchFoundId) {
+                    for (int i = scope; i >= 0; i--) {
+                        if(scopes.get(i).containsKey(cutRow.get(current))) {
+                            if(
+                                scopes.get(i).get(cutRow.get(current)).get(1).equals("int") ||
+                                scopes.get(i).get(cutRow.get(current)).get(1).equals("string")) {
+                                existInTableWithType = true;
+                            }
+                        }
+                    }
+                    if(!existInTableWithType) {
+                        return false;
+                    }
+                    existInTableWithType = false;
+                }else if(cutRow.get(current).equals(")")) {
+                    cp-=1;
+                }else if(cutRow.get(current).equals("(")) {
+                    cp+=1;
+                }
+                current+=1;
+            }
+            current = max+1;
             cb+=1;
             scopes.add(nTVS);
             currentScope+=1;
@@ -376,10 +439,9 @@ public class Semantical_analiser {
                         }
                     }
                     if(existInTableWithType) {
-                        int aux = current;
+                        int aux = current + 4;
                         if(cutRow.get(current+4).equals("(")) {
                             functionWasOpenned = true;
-                            aux+=4;
                             while(true) {
                                 if(functionWasOpenned) {
                                     if(cutRow.get(aux).equals("(")) {
@@ -430,6 +492,28 @@ public class Semantical_analiser {
             }else {
                 return false;
             }
+        }else if(matchFoundGlobalId && cutRow.get(current+1).equals("(")){
+            boolean existFun = false;
+            for (int i = scope; i >= 0; i--) {
+                if(scopes.get(i).containsKey(cutRow.get(current))) {
+                    if(scopes.get(i).get(cutRow.get(current)).get(1).equals("int") 
+                        || scopes.get(i).get(cutRow.get(current)).get(1).equals("string") ) {
+                        existFun = true;
+                        break;
+                    }
+                }
+            }
+            if(existFun){
+                while (true) {
+                    current+=1;
+                    if(cutRow.get(current+1).equals(";")) {
+                        current = max + 1;
+                        break;
+                    }
+                }
+            }else {
+                return false;
+            }
         }else {
             if(!getCheckVariableAlone(scope)) {
                 return false;
@@ -444,16 +528,16 @@ public class Semantical_analiser {
         String typeToAnalise = "";
         boolean existTableVar = false;
         for (int i = scope; i >= 0; i--) {
-            for ( String key : scopes.get(i).keySet()) {
-                for ( String keySub : scopes.get(i).keySet()) {
-                    if(keySub.equals(cutRow.get(current)) && scopes.get(i).get(keySub).get(2).equals(Integer.toString(i))){
-                        keyToAnalise = key;
-                        typeToAnalise = scopes.get(i).get(keySub).get(1);
-                        scope = i;
-                        existTableVar = true;
-                        break;
-                    }
+            for ( String keySub : scopes.get(i).keySet()) {
+                if( keySub.equals(cutRow.get(current)) && scopes.get(i).get(keySub).get(2).equals(Integer.toString(i))){
+                    keyToAnalise = keySub;
+                    typeToAnalise = scopes.get(i).get(keySub).get(1);
+                    existTableVar = true;
+                    break;
                 }
+            }
+            if(existTableVar) {
+                break;
             }
         }
         if(existTableVar) {
@@ -473,34 +557,59 @@ public class Semantical_analiser {
                 int aux = current;
                 aux += 2;
                 while(true) {
-                    if(
+                    if(functionWasOpenned) {
+                        if(cutRow.get(aux).equals("(")) {
+                            cp+=1;
+                        }else if(cutRow.get(aux).equals(")")) {
+                            cp-=1;
+                        }
+    
+                        if(cp == 0) {
+                            functionWasOpenned = false;
+                        }
+                        aux+=1;
+                    }else if(
                         !cutRow.get(aux).equals("+") &&
                         !cutRow.get(aux).equals("-") &&
                         !cutRow.get(aux).equals("*") &&
                         !cutRow.get(aux).equals("/") &&
+                        !cutRow.get(aux).equals(",") &&
                         !cutRow.get(aux).equals("(") &&
                         !cutRow.get(aux).equals(")") 
                         ) {
                             Matcher matcher = patternInt.matcher(cutRow.get(aux));
                             boolean matchFound = matcher.find();
                             if(matchFound) {
-                                if(cutRow.get(aux+1).equals(";")) {
+                                if(cutRow.get(aux+1).equals(";") || cutRow.get(aux+1).equals(" ")) {
                                     break;
                                 }else {
                                     aux+=1;
                                 }
                                 
                             }else {
-                                if(scopes.get(scope).containsKey(cutRow.get(aux))) {
-                                    if(scopes.get(scope).get(cutRow.get(aux)).get(1).equals("int")) {
-                                        existInTableWithType = true;
-                                        break;
+                                Matcher matcher1 = patternID.matcher(cutRow.get(aux));
+                                boolean matchFound1 = matcher1.find();
+                                if(matchFound1) {
+                                    for (int i = scope; i >= 0; i--) {
+                                        if(scopes.get(i).containsKey(cutRow.get(aux))) {
+                                            if(scopes.get(i).get(cutRow.get(aux)).get(1).equals("int")) {
+                                                existInTableWithType = true;
+                                                break;
+                                            }else {
+                                                existInTableWithType = false;
+                                            }
+                                        }else {
+                                            existInTableWithType = false;
+                                        }
                                     }
                                 }
                                 if(existInTableWithType) {
-                                    if(cutRow.get(aux+1).equals(";")) {
+                                    if(cutRow.get(aux+1).equals(";") || cutRow.get(aux+1).equals(" ")) {
                                         break;
                                     }else {
+                                        if(cutRow.get(aux+1).equals("(")) {
+                                            functionWasOpenned = true;
+                                        }   
                                         aux+=1;
                                     }
                                 }else {
@@ -516,8 +625,15 @@ public class Semantical_analiser {
                         aux+=1;
                     }
                 }
-                current = aux+2;
-            }
+                current = max + 1;
+            }else if(cutRow.get(current+1).equals(";") 
+                        || cutRow.get(current+1).equals(",")
+                        || cutRow.get(current+1).equals(")")
+                        || cutRow.get(current+1).equals(" ")) {
+                current+=2;
+            }else {
+                return false;
+            } 
         }else if(typeToAnalise.equals("string")) {
             if(cutRow.get(current+1).equals("=")) {
                 char[] charBegin = cutRow.get(current+2).toCharArray();
@@ -525,30 +641,58 @@ public class Semantical_analiser {
                     current+=4;
                 }else {
                     boolean existInTableWithType = false;
-                    if(scopes.get(scope).containsKey(cutRow.get(current+2))) {
-                        if(scopes.get(scope).get(cutRow.get(current+2)).get(1).equals("string")) {
-                            existInTableWithType = true;
+                    for (int i = scope; i >= 0; i--) {
+                        if(scopes.get(i).containsKey(cutRow.get(current+2))) {
+                            if(scopes.get(i).get(cutRow.get(current+2)).get(1).equals("string")) {
+                                existInTableWithType = true;
+                                break;
+                            }
                         }
                     }
-                    
                     if(existInTableWithType) {
-                        if(cutRow.get(current+4).equals(";")) {
-                            current+=4;
+                        int aux = current + 3;
+                        if(cutRow.get(current+3).equals("(")) {
+                            functionWasOpenned = true;
+                            while(true) {
+                                if(functionWasOpenned) {
+                                    if(cutRow.get(aux).equals("(")) {
+                                        cp+=1;
+                                    }else if(cutRow.get(aux).equals(")")) {
+                                        cp-=1;
+                                    }
+                
+                                    if(cp == 0) {
+                                        functionWasOpenned = false;
+                                    }
+                                    aux+=1;
+                                }else {
+                                    break;
+                                }
+                            }
+                        }
+                        if(cutRow.get(aux).equals(";") || cutRow.get(aux).equals(" ")) {
+                            current+= aux + 1;
                         }else {
-                            current+=4;
+                            current+= aux + 1;
                             return false;
                         }
                     }else {
                         return false;
                     }
                 }
-            }else if(cutRow.get(current+2).equals(";")) {
-                current+=2;
+                }else if(cutRow.get(current+1).equals(";") 
+                        || cutRow.get(current+1).equals(",")
+                        || cutRow.get(current+1).equals(")")
+                        || cutRow.get(current+1).equals(" ")) {
+                    current+=2;
+                }else { 
+                    return false;
+                }
             }else {
-                return false;
-            }
-        }
-
+                if(!getCheckVariableAlone(scope)) {
+                    return false;
+                }
+            } 
         return true;
     }
 

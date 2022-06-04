@@ -1,0 +1,2 @@
+Basta inserir as entradas no arquivo input.txt
+E posteriormente executar a main no arquivo App.java

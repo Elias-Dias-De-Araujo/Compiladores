@@ -1,0 +1,6 @@
+O símbolo | é apenas um separador e não faz parte da linguagem em questão,
+ele serve unicamente para separar as transições.Dessa forma, apenas para que 
+os itens não fiquem juntos um no outro.
+
+Os símbolos { } são apenas para organizar melhor os estados destino,apenas também 
+para um quesito organizacional, sendo assim, eles não fazem parte da gramática.
