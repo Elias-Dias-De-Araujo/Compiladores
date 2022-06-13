@@ -34,16 +34,14 @@ public class Print_tree {
 
     public void creatingTree() {
         while (!cutRow.get(current).equals(" ")) {
-            Matcher matchId = patternID.matcher(cutRow.get(current));
-            boolean matchFoundId = matchId.find();
-            ArrayList<String> currentValues = new ArrayList<String>();
-
+            ArrayList<String> newArrayHash = new ArrayList<String>();
             if (cutRow.get(current + 1).equals("(")) {
                 if (!scopes.isEmpty()) {
                     tablePatterns.get(scopes.get(scopes.size() - 1)).add(cutRow.get(current));
                 }
-                tablePatterns.put(cutRow.get(current), currentValues);
+                tablePatterns.put(cutRow.get(current), newArrayHash);
                 scopes.add(cutRow.get(current));
+                current += 1;
             } else if (cutRow.get(current).equals(")")) {
                 scopes.remove(scopes.size() - 1);
             } else if (!cutRow.get(current).equals(",") && !cutRow.get(current).equals("(")
@@ -63,7 +61,17 @@ public class Print_tree {
     }
 
     public void printing() {
-
+        String Tree = "";
+        for (String key : tablePatterns.keySet()) {
+            if (tablePatterns.get(key).size() == 1) {
+                Tree += key + "--|" + tablePatterns.get(key).get(0);
+            } else if (tablePatterns.get(key).size() > 1) {
+                Tree += "---|";
+                Tree += tablePatterns.get(key).get(0);
+                Tree += tablePatterns.get(key).get(1);
+            }
+        }
+        System.out.println(Tree);
     }
 
 }
