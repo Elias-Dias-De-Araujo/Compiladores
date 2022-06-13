@@ -49,7 +49,7 @@ public class Print_tree {
                 if (cutRow.get(current + 1).equals(",") || cutRow.get(current + 1).equals(")")) {
                     tablePatterns.get(scopes.get(scopes.size() - 1)).add(cutRow.get(current));
                 } else {
-                    String getTogether = cutRow.get(current) + cutRow.get(current + 1);
+                    String getTogether = cutRow.get(current) + " " + cutRow.get(current + 1);
                     tablePatterns.get(scopes.get(scopes.size() - 1)).add(getTogether);
                     current += 1;
                 }
@@ -67,8 +67,8 @@ public class Print_tree {
                 Tree += key + "--|" + tablePatterns.get(key).get(0);
             } else if (tablePatterns.get(key).size() > 1) {
                 Tree += "---|";
-                Tree += tablePatterns.get(key).get(0);
-                Tree += tablePatterns.get(key).get(1);
+                Tree += tablePatterns.get(key).get(0); // Esquerda
+                Tree += tablePatterns.get(key).get(1); // Direita
             }
         }
         System.out.println(Tree);
