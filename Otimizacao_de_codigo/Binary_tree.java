@@ -81,6 +81,10 @@ public class Binary_tree {
                     }
                     sumQuantSides = Integer.parseInt(splited[2]) + 1;
                     aux = aux + " " + sumQuantSides;
+                    if (!scopes.isEmpty()) {
+                        scopes.set(scopes.size() - 1, aux); // Aqui é para atualizar o valor de side disponivel no nó
+                                                            // atual
+                    }
                     nodeFinded = null;
 
                     // tablePatterns.get(scopes.get(scopes.size() - 1)).add(cutRow.get(current));
@@ -112,24 +116,31 @@ public class Binary_tree {
             current += 1;
         }
 
-        printing(root);
+        preOrder(root);
     }
 
-    public void printing(Node current) {
+    public void preOrder(Node current) {
         if (current != null) {
-            printing(current.getLeft());
-            System.out.println(current.getValue());
-            printing(current.getRight());
+            String[] splited = current.getValue().split(" ");
+            if (splited[0].equalsIgnoreCase("CONST") || splited[0].equalsIgnoreCase("TEMP")) {
+                System.out.println(current.getValue());
+            } else {
+                System.out.println(splited[0]);
+            }
+            preOrder(current.getLeft());
+            preOrder(current.getRight());
         }
     }
 
     public void inOrderFind(Node current, String valueToFind) {
-        if (current.getValue().equalsIgnoreCase(valueToFind)) {
-            nodeFinded = current;
-        } else {
-            inOrderFind(current.getLeft(), valueToFind);
-            if (nodeFinded == null) {
-                inOrderFind(current.getRight(), valueToFind);
+        if (current != null) {
+            if (current.getValue().equalsIgnoreCase(valueToFind)) {
+                nodeFinded = current;
+            } else {
+                inOrderFind(current.getLeft(), valueToFind);
+                if (nodeFinded == null) {
+                    inOrderFind(current.getRight(), valueToFind);
+                }
             }
         }
     }
