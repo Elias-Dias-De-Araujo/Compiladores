@@ -1,7 +1,4 @@
 import java.util.ArrayList; // import the ArrayList class
-import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Binary_tree {
     private Node root;
@@ -10,9 +7,7 @@ public class Binary_tree {
     private String row;
     private int current = 1;
     private ArrayList<String> cutRow = new ArrayList<String>();
-    private HashMap<String, ArrayList<String>> tablePatterns = new HashMap<String, ArrayList<String>>();
     private ArrayList<String> scopes = new ArrayList<String>();
-    Pattern patternID = Pattern.compile("[A-Za-z]+[A-Za-z0-9]*");
 
     public Binary_tree() {
         this.root = null;
@@ -38,7 +33,6 @@ public class Binary_tree {
             String[] splited = null;
             String aux = "";
             String reserved = cutRow.get(current);
-            ArrayList<String> newArrayHash = new ArrayList<String>();
             if (cutRow.get(current + 1).equals("(")) {
                 reserved = changeReservedName(reserved);
                 Node newNode = new Node(reserved);
@@ -48,15 +42,22 @@ public class Binary_tree {
                     splited = scopes.get(scopes.size() - 1).split(" ");
                     aux = splited[0] + " " + splited[1];
                     inOrderFind(root, aux);
+
+                    /*
+                     * Aqui é verificado se o valor de verificação do side é 0 ou 1
+                     * se for 0 então será atribuído o nó atual ao lado esquerdo do pai
+                     * e se for 1 então será atribuído ao lado direito.
+                     */
                     if (splited[2].equalsIgnoreCase("0")) {
                         nodeFinded.setLeft(newNode);
                     } else if (splited[2].equalsIgnoreCase("1")) {
                         nodeFinded.setRight(newNode);
                     }
+                    // Fim da verificação de esquerda ou direita
+
                     sumQuantSides = Integer.parseInt(splited[2]) + 1;
                     aux = aux + " " + sumQuantSides;
                     nodeFinded = null;
-                    // tablePatterns.get(scopes.get(scopes.size() - 1)).add(cutRow.get(current));
                 }
                 if (!scopes.isEmpty()) {
                     scopes.set(scopes.size() - 1, aux); // Aqui é para atualizar o valor de side disponivel no nó atual
@@ -67,6 +68,8 @@ public class Binary_tree {
                 scopes.remove(scopes.size() - 1);
             } else if (!cutRow.get(current).equals(",") && !cutRow.get(current).equals("(")
                     && !cutRow.get(current).equals(")")) {
+
+                // Nó folha sem identificador de CONST ou TEMP
                 if (cutRow.get(current + 1).equals(",") || cutRow.get(current + 1).equals(")")) {
                     reserved = changeReservedName(reserved);
                     Node newNode = new Node(reserved);
@@ -87,8 +90,7 @@ public class Binary_tree {
                     }
                     nodeFinded = null;
 
-                    // tablePatterns.get(scopes.get(scopes.size() - 1)).add(cutRow.get(current));
-                } else {
+                } else { // Nó folha com identificador de CONST ou TEMP
                     String getTogether = cutRow.get(current) + " " + cutRow.get(current + 1);
 
                     Node newNode = new Node(getTogether);
@@ -96,20 +98,29 @@ public class Binary_tree {
                     splited = scopes.get(scopes.size() - 1).split(" ");
                     aux = splited[0] + " " + splited[1];
                     inOrderFind(root, aux);
+
+                    /*
+                     * Aqui é verificado se o valor de verificação do side é 0 ou 1
+                     * se for 0 então será atribuído o nó atual ao lado esquerdo do pai
+                     * e se for 1 então será atribuído ao lado direito.
+                     */
                     if (splited[2].equalsIgnoreCase("0")) {
                         nodeFinded.setLeft(newNode);
                     } else if (splited[2].equalsIgnoreCase("1")) {
                         nodeFinded.setRight(newNode);
                     }
-                    sumQuantSides = Integer.parseInt(splited[2]) + 1;
+                    // Fim da verificação de esquerda ou direita
+
+                    sumQuantSides = Integer.parseInt(splited[2]) + 1; // pega o valor do side e soma mais 1
+
                     aux = aux + " " + sumQuantSides;
+
                     if (!scopes.isEmpty()) {
                         scopes.set(scopes.size() - 1, aux); // Aqui é para atualizar o valor de side disponivel no nó
                                                             // atual
                     }
                     nodeFinded = null;
 
-                    // tablePatterns.get(scopes.get(scopes.size() - 1)).add(getTogether);
                     current += 1;
                 }
             }
@@ -119,7 +130,7 @@ public class Binary_tree {
         preOrder(root);
     }
 
-    public void preOrder(Node current) {
+    public void preOrder(Node current) { // Função responsável por printar a árvore em pre-ordem
         if (current != null) {
             String[] splited = current.getValue().split(" ");
             if (splited[0].equalsIgnoreCase("CONST") || splited[0].equalsIgnoreCase("TEMP")) {
@@ -132,10 +143,11 @@ public class Binary_tree {
         }
     }
 
+    // Função responsável por encontrar um determinado nó na árvore e retorná-lo
     public void inOrderFind(Node current, String valueToFind) {
         if (current != null) {
             if (current.getValue().equalsIgnoreCase(valueToFind)) {
-                nodeFinded = current;
+                nodeFinded = current; // O nó encontrado será salvo nessa variável que é global
             } else {
                 inOrderFind(current.getLeft(), valueToFind);
                 if (nodeFinded == null) {
@@ -145,6 +157,7 @@ public class Binary_tree {
         }
     }
 
+    // Função responsável por definir o identificador de cada palavra reservada
     public String changeReservedName(String reserved) {
         if (reserved.equalsIgnoreCase("+")) {
             reserved = reserved + " " + plus;
