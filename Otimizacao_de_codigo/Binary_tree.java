@@ -3,8 +3,9 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Print_tree {
-    private int max;
+public class Binary_tree {
+    private Node root;
+    private int plus, less, mult, div, move, mem = 0;
     private String row;
     private int current = 1;
     private ArrayList<String> cutRow = new ArrayList<String>();
@@ -12,8 +13,8 @@ public class Print_tree {
     private ArrayList<String> scopes = new ArrayList<String>();
     Pattern patternID = Pattern.compile("[A-Za-z]+[A-Za-z0-9]*");
 
-    public Print_tree() {
-
+    public Binary_tree() {
+        this.root = null;
     }
 
     public void setRow(String currentRow) {
@@ -27,15 +28,16 @@ public class Print_tree {
         for (int i = 0; i < cut.length; i++) {
             this.cutRow.add(cut[i]);
         }
-
-        this.max = cutRow.size() - 1;
         this.cutRow.add(" ");
     }
 
     public void creatingTree() {
         while (!cutRow.get(current).equals(" ")) {
+            String reserved = cutRow.get(current);
             ArrayList<String> newArrayHash = new ArrayList<String>();
             if (cutRow.get(current + 1).equals("(")) {
+                reserved = changeReservedName(reserved);
+                Node newNode = new Node(reserved);
                 if (!scopes.isEmpty()) {
                     tablePatterns.get(scopes.get(scopes.size() - 1)).add(cutRow.get(current));
                 }
@@ -72,6 +74,30 @@ public class Print_tree {
             }
         }
         System.out.println(Tree);
+    }
+
+    public String changeReservedName(String reserved) {
+        if (reserved.equalsIgnoreCase("+")) {
+            reserved = reserved + " " + plus;
+            plus += 1;
+        } else if (reserved.equalsIgnoreCase("-")) {
+            reserved = reserved + " " + less;
+            less += 1;
+        } else if (reserved.equalsIgnoreCase("*")) {
+            reserved = reserved + " " + mult;
+            mult += 1;
+        } else if (reserved.equalsIgnoreCase("/")) {
+            reserved = reserved + " " + div;
+            div += 1;
+        } else if (reserved.equalsIgnoreCase("move")) {
+            reserved = reserved + " " + move;
+            move += 1;
+        } else if (reserved.equalsIgnoreCase("mem")) {
+            reserved = reserved + " " + mem;
+            mem += 1;
+        }
+
+        return reserved;
     }
 
 }
