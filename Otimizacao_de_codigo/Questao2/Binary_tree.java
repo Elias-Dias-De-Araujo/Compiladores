@@ -188,7 +188,10 @@ public class Binary_tree {
             node.setPattern("TEMP " + TEMP);
             TEMP += 1;
         } else {
-            ArrayList<String> nodesThrough = new ArrayList<String>();
+            int sumNumNodes = 0;
+            Node nodeAux = node;
+            ArrayList<Integer> numOfNodes = new ArrayList<Integer>();
+            HashMap<String, ArrayList<Integer>> nodesThrough = new HashMap<String, ArrayList<Integer>>();
             ArrayList<String> patternsToLook = new ArrayList<String>();
             String[] splited = node.getValue().split(" ");
             String keyFromNode = splited[0];
@@ -206,6 +209,89 @@ public class Binary_tree {
                 node.setPattern("DIV " + DIV);
                 DIV += 1;
             } else if (keyFromNode.equalsIgnoreCase("CONST")) {
+                // ADDI
+                for (int i = 0; i < patterns.get("ADDI").size(); i++) {
+                    splited = patterns.get("ADDI").get(i).split(" ");
+                    for (int j = 0; j < splited.length; j++) {
+                        if (nodeAux.getValue().equalsIgnoreCase(splited[j])) {
+                            sumNumNodes += 1;
+                        } else {
+                            sumNumNodes = -1;
+                            break;
+                        }
+                        nodeAux = nodeAux.getParent();
+                    }
+                    numOfNodes.add(sumNumNodes);
+                    sumNumNodes = 0;
+                    nodeAux = node;
+                }
+                nodesThrough.put("ADDI", numOfNodes);
+                numOfNodes.clear();
+                // Fim do ADDI
+
+                // SUBI
+                splited = patterns.get("SUBI").get(0).split(" ");
+                for (int j = 0; j < splited.length; j++) {
+                    if (j == 0) {
+                        if (nodeAux.getParent().getRight() != nodeAux) {
+                            sumNumNodes = -1;
+                            break;
+                        }
+                    }
+                    if (nodeAux.getValue().equalsIgnoreCase(splited[j])) {
+                        sumNumNodes += 1;
+                    } else {
+                        sumNumNodes = -1;
+                        break;
+                    }
+                    nodeAux = nodeAux.getParent();
+                }
+                numOfNodes.add(sumNumNodes);
+                nodesThrough.put("SUBI", numOfNodes);
+                nodeAux = node;
+                numOfNodes.clear();
+                // Fim do SUBI
+
+                // LOAD
+                for (int i = 0; i < patterns.get("LOAD").size() - 1; i++) {
+                    splited = patterns.get("LOAD").get(i).split(" ");
+                    for (int j = 0; j < splited.length; j++) {
+                        if (nodeAux.getValue().equalsIgnoreCase(splited[j])) {
+                            sumNumNodes += 1;
+                        } else {
+                            sumNumNodes = -1;
+                            break;
+                        }
+                        nodeAux = nodeAux.getParent();
+                    }
+                    numOfNodes.add(sumNumNodes);
+                    sumNumNodes = 0;
+                    nodeAux = node;
+                }
+                nodesThrough.put("LOAD", numOfNodes);
+                numOfNodes.clear();
+                // Fim do LOAD
+
+                // STORE
+                for (int i = 0; i < patterns.get("STORE").size() - 1; i++) {
+                    splited = patterns.get("STORE").get(i).split(" ");
+                    for (int j = 0; j < splited.length; j++) {
+                        if (nodeAux.getValue().equalsIgnoreCase(splited[j])) {
+                            sumNumNodes += 1;
+                        } else {
+                            sumNumNodes = -1;
+                            break;
+                        }
+                        nodeAux = nodeAux.getParent();
+                    }
+                    numOfNodes.add(sumNumNodes);
+                    sumNumNodes = 0;
+                    nodeAux = node;
+                }
+                nodesThrough.put("STORE", numOfNodes);
+                numOfNodes.clear();
+                // Fim do STORE
+            } else if (keyFromNode.equalsIgnoreCase("MEM")) {
 
             }
         }
