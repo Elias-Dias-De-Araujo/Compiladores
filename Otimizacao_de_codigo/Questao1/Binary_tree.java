@@ -1,7 +1,7 @@
 import java.util.ArrayList; // import the ArrayList class
 
 public class Binary_tree {
-    private Node root;
+    public Node root;
     private Node nodeFinded = null;
     private int plus, less, mult, div, move, mem = 0;
     private String row;
@@ -127,7 +127,7 @@ public class Binary_tree {
             current += 1;
         }
 
-        posOrder(root);
+        // posOrder(root);
     }
 
     public void preOrder(Node current) { // Função responsável por printar a árvore em pre-ordem
