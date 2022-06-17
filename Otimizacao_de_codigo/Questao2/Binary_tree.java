@@ -2,6 +2,7 @@ import java.util.ArrayList; // import the ArrayList class
 import java.util.HashMap;
 
 public class Binary_tree {
+    private boolean runAgain = false;
     private Node root;
     private Node nodeFinded = null;
     private int plus, less, mult, div, move, mem = 0;
@@ -15,28 +16,28 @@ public class Binary_tree {
     public Binary_tree() {
         ArrayList<String> currentPattern = new ArrayList<String>();
         this.root = null;
-        currentPattern.add("TEMP ");
+        currentPattern.add("TEMP");
         patterns.put("TEMP", currentPattern);
         currentPattern.clear();
 
-        currentPattern.add("+ ");
+        currentPattern.add("+");
         patterns.put("ADD", currentPattern);
         currentPattern.clear();
 
-        currentPattern.add("- ");
+        currentPattern.add("-");
         patterns.put("SUB", currentPattern);
         currentPattern.clear();
 
-        currentPattern.add("* ");
+        currentPattern.add("*");
         patterns.put("MUL", currentPattern);
         currentPattern.clear();
 
-        currentPattern.add("/ ");
+        currentPattern.add("/");
         patterns.put("DIV", currentPattern);
         currentPattern.clear();
 
         currentPattern.add("CONST +");
-        currentPattern.add("CONST ");
+        currentPattern.add("CONST");
         patterns.put("ADDI", currentPattern);
         currentPattern.clear();
 
@@ -46,7 +47,7 @@ public class Binary_tree {
 
         currentPattern.add("CONST + MEM");
         currentPattern.add("CONST MEM");
-        currentPattern.add("MEM ");
+        currentPattern.add("MEM");
         patterns.put("LOAD", currentPattern);
         currentPattern.clear();
 
@@ -291,8 +292,65 @@ public class Binary_tree {
                 nodesThrough.put("STORE", numOfNodes);
                 numOfNodes.clear();
                 // Fim do STORE
-            } else if (keyFromNode.equalsIgnoreCase("MEM")) {
 
+                int indexNumMax = -1;
+                int maxNumNode = 0;
+                ArrayList<Integer> indexCostArr = new ArrayList<Integer>();
+                HashMap<String, ArrayList<Integer>> indexCostHash = new HashMap<String, ArrayList<Integer>>();
+
+                // setando melhor index de cada padrão com seu respectivo número de nós
+                for (String key : nodesThrough.keySet()) {
+                    for (int i = 0; i < nodesThrough.get(key).size(); i++) {
+                        if (nodesThrough.get(key).get(i) != -1) {
+                            if (nodesThrough.get(key).get(i) >= maxNumNode) {
+                                indexNumMax = i;
+                                maxNumNode = nodesThrough.get(key).get(i);
+                            }
+                        }
+                    }
+                    indexCostArr.add(indexNumMax);
+                    indexCostArr.add(maxNumNode);
+                    indexCostHash.put(key, indexCostArr);
+
+                    indexCostArr.clear();
+                    indexNumMax = -1;
+                    maxNumNode = 2147483647;
+                }
+
+            } else if (keyFromNode.equalsIgnoreCase("MEM")) {
+                nodesThrough.clear();
+                // LOAD
+                splited = patterns.get("LOAD").get(patterns.get("LOAD").size() - 1).split(" ");
+                for (int j = 0; j < splited.length; j++) {
+                    if (nodeAux.getValue().equalsIgnoreCase(splited[j])) {
+                        sumNumNodes += 1;
+                    } else {
+                        sumNumNodes = -1;
+                        break;
+                    }
+                    nodeAux = nodeAux.getParent();
+                }
+                numOfNodes.add(sumNumNodes);
+                nodesThrough.put("LOAD", numOfNodes);
+                sumNumNodes = 0;
+                nodeAux = node;
+                numOfNodes.clear();
+                // Fim do LOAD
+
+                // STORE
+                if (nodeAux.getParent() != null) {
+                    if (nodeAux.getParent().getLeft().getValue().equalsIgnoreCase(nodeAux.getValue())) {
+                        sumNumNodes += 1;
+                    } else {
+                        sumNumNodes = -1;
+                    }
+                }
+                numOfNodes.add(sumNumNodes);
+                nodesThrough.put("STORE", numOfNodes);
+                sumNumNodes = 0;
+                nodeAux = node;
+                numOfNodes.clear();
+                // Fim do STORE
             }
         }
     }
