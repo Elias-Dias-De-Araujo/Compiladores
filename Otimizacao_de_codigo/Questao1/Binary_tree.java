@@ -127,7 +127,7 @@ public class Binary_tree {
             current += 1;
         }
 
-        preOrder(root);
+        posOrder(root);
     }
 
     public void preOrder(Node current) { // Função responsável por printar a árvore em pre-ordem
@@ -140,6 +140,32 @@ public class Binary_tree {
             }
             preOrder(current.getLeft());
             preOrder(current.getRight());
+        }
+    }
+
+    public void inOrder(Node current) { // Função responsável por printar a árvore em pre-ordem
+        if (current != null) {
+            inOrder(current.getLeft());
+            String[] splited = current.getValue().split(" ");
+            if (splited[0].equalsIgnoreCase("CONST") || splited[0].equalsIgnoreCase("TEMP")) {
+                System.out.println(current.getValue());
+            } else {
+                System.out.println(splited[0]);
+            }
+            inOrder(current.getRight());
+        }
+    }
+
+    public void posOrder(Node current) { // Função responsável por printar a árvore em pre-ordem
+        if (current != null) {
+            posOrder(current.getLeft());
+            posOrder(current.getRight());
+            String[] splited = current.getValue().split(" ");
+            if (splited[0].equalsIgnoreCase("CONST") || splited[0].equalsIgnoreCase("TEMP")) {
+                System.out.println(current.getValue());
+            } else {
+                System.out.println(splited[0]);
+            }
         }
     }
 
