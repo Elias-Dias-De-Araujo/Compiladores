@@ -1,16 +1,65 @@
 import java.util.ArrayList; // import the ArrayList class
+import java.util.HashMap;
 
 public class Binary_tree {
     private Node root;
     private Node nodeFinded = null;
     private int plus, less, mult, div, move, mem = 0;
+    private int TEMP, ADD, MUL, SUB, DIV, ADDI, SUBI, LOAD, STORE, MOVEM = 0;
     private String row;
     private int current = 1;
     private ArrayList<String> cutRow = new ArrayList<String>();
     private ArrayList<String> scopes = new ArrayList<String>();
+    private HashMap<String, ArrayList<String>> patterns = new HashMap<String, ArrayList<String>>();
 
     public Binary_tree() {
+        ArrayList<String> currentPattern = new ArrayList<String>();
         this.root = null;
+        currentPattern.add("TEMP ");
+        patterns.put("TEMP", currentPattern);
+        currentPattern.clear();
+
+        currentPattern.add("+ ");
+        patterns.put("ADD", currentPattern);
+        currentPattern.clear();
+
+        currentPattern.add("- ");
+        patterns.put("SUB", currentPattern);
+        currentPattern.clear();
+
+        currentPattern.add("* ");
+        patterns.put("MUL", currentPattern);
+        currentPattern.clear();
+
+        currentPattern.add("/ ");
+        patterns.put("DIV", currentPattern);
+        currentPattern.clear();
+
+        currentPattern.add("CONST +");
+        currentPattern.add("CONST ");
+        patterns.put("ADDI", currentPattern);
+        currentPattern.clear();
+
+        currentPattern.add("CONST -");
+        patterns.put("SUBI", currentPattern);
+        currentPattern.clear();
+
+        currentPattern.add("CONST + MEM");
+        currentPattern.add("CONST MEM");
+        currentPattern.add("MEM ");
+        patterns.put("LOAD", currentPattern);
+        currentPattern.clear();
+
+        currentPattern.add("CONST + MEM MOVE");
+        currentPattern.add("CONST MEM MOVE");
+        currentPattern.add("MEM MOVE");
+        patterns.put("STORE", currentPattern);
+        currentPattern.clear();
+
+        currentPattern.add("MEM MOVE MEM");
+        patterns.put("MOVEM", currentPattern);
+        currentPattern.clear();
+
     }
 
     public void setRow(String currentRow) {
@@ -43,17 +92,12 @@ public class Binary_tree {
                     aux = splited[0] + " " + splited[1];
                     inOrderFind(root, aux);
 
-                    /*
-                     * Aqui é verificado se o valor de verificação do side é 0 ou 1
-                     * se for 0 então será atribuído o nó atual ao lado esquerdo do pai
-                     * e se for 1 então será atribuído ao lado direito.
-                     */
                     if (splited[2].equalsIgnoreCase("0")) {
                         nodeFinded.setLeft(newNode);
                     } else if (splited[2].equalsIgnoreCase("1")) {
                         nodeFinded.setRight(newNode);
                     }
-                    // Fim da verificação de esquerda ou direita
+                    newNode.setParent(nodeFinded);
 
                     sumQuantSides = Integer.parseInt(splited[2]) + 1;
                     aux = aux + " " + sumQuantSides;
@@ -82,6 +126,9 @@ public class Binary_tree {
                     } else if (splited[2].equalsIgnoreCase("1")) {
                         nodeFinded.setRight(newNode);
                     }
+
+                    newNode.setParent(nodeFinded);
+
                     sumQuantSides = Integer.parseInt(splited[2]) + 1;
                     aux = aux + " " + sumQuantSides;
                     if (!scopes.isEmpty()) {
@@ -111,6 +158,8 @@ public class Binary_tree {
                     }
                     // Fim da verificação de esquerda ou direita
 
+                    newNode.setParent(nodeFinded); // setando pai
+
                     sumQuantSides = Integer.parseInt(splited[2]) + 1; // pega o valor do side e soma mais 1
 
                     aux = aux + " " + sumQuantSides;
@@ -130,29 +179,35 @@ public class Binary_tree {
         posOrder(root);
     }
 
-    public void preOrder(Node current) { // Função responsável por printar a árvore em pre-ordem
-        if (current != null) {
-            String[] splited = current.getValue().split(" ");
-            if (splited[0].equalsIgnoreCase("CONST") || splited[0].equalsIgnoreCase("TEMP")) {
-                System.out.println(current.getValue());
-            } else {
-                System.out.println(splited[0]);
-            }
-            preOrder(current.getLeft());
-            preOrder(current.getRight());
+    public void selectPatterns(Node node) {
+        if (node.getPattern() != null) {
+            return;
         }
-    }
 
-    public void inOrder(Node current) { // Função responsável por printar a árvore em pre-ordem
-        if (current != null) {
-            inOrder(current.getLeft());
-            String[] splited = current.getValue().split(" ");
-            if (splited[0].equalsIgnoreCase("CONST") || splited[0].equalsIgnoreCase("TEMP")) {
-                System.out.println(current.getValue());
-            } else {
-                System.out.println(splited[0]);
+        if (node.getValue().equals("FP")) {
+            node.setPattern("TEMP " + TEMP);
+            TEMP += 1;
+        } else {
+            ArrayList<String> nodesThrough = new ArrayList<String>();
+            ArrayList<String> patternsToLook = new ArrayList<String>();
+            String[] splited = node.getValue().split(" ");
+            String keyFromNode = splited[0];
+
+            if (keyFromNode.equalsIgnoreCase("+")) {
+                node.setPattern("ADD " + ADD);
+                ADD += 1;
+            } else if (keyFromNode.equalsIgnoreCase("*")) {
+                node.setPattern("MUL " + MUL);
+                MUL += 1;
+            } else if (keyFromNode.equalsIgnoreCase("-")) {
+                node.setPattern("SUB " + SUB);
+                SUB += 1;
+            } else if (keyFromNode.equalsIgnoreCase("/")) {
+                node.setPattern("DIV " + DIV);
+                DIV += 1;
+            } else if (keyFromNode.equalsIgnoreCase("CONST")) {
+
             }
-            inOrder(current.getRight());
         }
     }
 
@@ -160,12 +215,7 @@ public class Binary_tree {
         if (current != null) {
             posOrder(current.getLeft());
             posOrder(current.getRight());
-            String[] splited = current.getValue().split(" ");
-            if (splited[0].equalsIgnoreCase("CONST") || splited[0].equalsIgnoreCase("TEMP")) {
-                System.out.println(current.getValue());
-            } else {
-                System.out.println(splited[0]);
-            }
+            selectPatterns(current);
         }
     }
 
