@@ -2,12 +2,10 @@ import java.util.ArrayList; // import the ArrayList class
 import java.util.HashMap;
 
 public class Binary_tree {
-    private boolean runAgain = false;
     public Node root;
     private Node nodeFinded = null;
     private int plus, less, mult, div, move, mem = 0;
     private int TEMP, ADD, MUL, SUB, DIV, ADDI, SUBI, LOAD, STORE, MOVEM = 0;
-    private String row;
     private int current = 1;
     private ArrayList<String> cutRow = new ArrayList<String>();
     private ArrayList<String> scopes = new ArrayList<String>();
@@ -66,7 +64,6 @@ public class Binary_tree {
     public void setRow(String currentRow) {
         String[] cut;
         cut = currentRow.split(" ");
-        this.row = currentRow;
         this.cutRow.clear();
 
         this.cutRow.add(" ");
@@ -245,7 +242,14 @@ public class Binary_tree {
                         String[] splitedNodeKey = nodeAux.getValue().split(" ");
                         String nodeKey = splitedNodeKey[0];
                         if (j == 0) {
-                            if (nodeAux.getParent().getRight() != nodeAux) {
+                            String[] splitedNodeParentKey = nodeAux.getParent().getValue().split(" ");
+                            String nodeParentKey = splitedNodeParentKey[0];
+                            if (nodeParentKey.equalsIgnoreCase("-")) {
+                                if (nodeAux.getParent().getRight() != nodeAux) {
+                                    sumNumNodes = -1;
+                                    break;
+                                }
+                            } else {
                                 sumNumNodes = -1;
                                 break;
                             }
@@ -295,6 +299,13 @@ public class Binary_tree {
                     for (int i = 0; i < patterns.get("STORE").size() - 1; i++) {
                         splited = patterns.get("STORE").get(i).split(" ");
                         for (int j = 0; j < splited.length; j++) {
+                            // Tem que fazer isso aqui para todos
+                            if ((splited.length - 1) - j != 0) {
+                                if (nodeAux.getParent() == null) {
+                                    sumNumNodes = -1;
+                                    break;
+                                }
+                            }
                             String[] splitedNodeKey = nodeAux.getValue().split(" ");
                             String nodeKey = splitedNodeKey[0];
                             if (nodeKey.equalsIgnoreCase(splited[j])) {
@@ -517,8 +528,3 @@ public class Binary_tree {
     }
 
 }
-
-/*
- * Node Estrutura:
- * Nome do Node | identificador | Quantidade de nós
- */
