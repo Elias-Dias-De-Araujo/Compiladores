@@ -14,52 +14,52 @@ public class Binary_tree {
     private HashMap<String, ArrayList<String>> patterns = new HashMap<String, ArrayList<String>>();
 
     public Binary_tree() {
-        ArrayList<String> currentPattern = new ArrayList<String>();
         this.root = null;
+
+        ArrayList<String> currentPattern = new ArrayList<String>();
         currentPattern.add("TEMP");
         patterns.put("TEMP", currentPattern);
-        currentPattern.clear();
 
-        currentPattern.add("+");
-        patterns.put("ADD", currentPattern);
-        currentPattern.clear();
+        ArrayList<String> currentPattern1 = new ArrayList<String>();
+        currentPattern1.add("+");
+        patterns.put("ADD", currentPattern1);
 
-        currentPattern.add("-");
-        patterns.put("SUB", currentPattern);
-        currentPattern.clear();
+        ArrayList<String> currentPattern2 = new ArrayList<String>();
+        currentPattern2.add("-");
+        patterns.put("SUB", currentPattern2);
 
-        currentPattern.add("*");
-        patterns.put("MUL", currentPattern);
-        currentPattern.clear();
+        ArrayList<String> currentPattern3 = new ArrayList<String>();
+        currentPattern3.add("*");
+        patterns.put("MUL", currentPattern3);
 
-        currentPattern.add("/");
-        patterns.put("DIV", currentPattern);
-        currentPattern.clear();
+        ArrayList<String> currentPattern4 = new ArrayList<String>();
+        currentPattern4.add("/");
+        patterns.put("DIV", currentPattern4);
 
-        currentPattern.add("CONST +");
-        currentPattern.add("CONST");
-        patterns.put("ADDI", currentPattern);
-        currentPattern.clear();
+        ArrayList<String> currentPattern5 = new ArrayList<String>();
+        currentPattern5.add("CONST +");
+        currentPattern5.add("CONST");
+        patterns.put("ADDI", currentPattern5);
 
-        currentPattern.add("CONST -");
-        patterns.put("SUBI", currentPattern);
-        currentPattern.clear();
+        ArrayList<String> currentPattern6 = new ArrayList<String>();
+        currentPattern6.add("CONST -");
+        patterns.put("SUBI", currentPattern6);
 
-        currentPattern.add("CONST + MEM");
-        currentPattern.add("CONST MEM");
-        currentPattern.add("MEM");
-        patterns.put("LOAD", currentPattern);
-        currentPattern.clear();
+        ArrayList<String> currentPattern7 = new ArrayList<String>();
+        currentPattern7.add("CONST + MEM");
+        currentPattern7.add("CONST MEM");
+        currentPattern7.add("MEM");
+        patterns.put("LOAD", currentPattern7);
 
-        currentPattern.add("CONST + MEM MOVE");
-        currentPattern.add("CONST MEM MOVE");
-        currentPattern.add("MEM MOVE");
-        patterns.put("STORE", currentPattern);
-        currentPattern.clear();
+        ArrayList<String> currentPattern8 = new ArrayList<String>();
+        currentPattern8.add("CONST + MEM MOVE");
+        currentPattern8.add("CONST MEM MOVE");
+        currentPattern8.add("MEM MOVE");
+        patterns.put("STORE", currentPattern8);
 
-        currentPattern.add("MEM MOVE MEM");
-        patterns.put("MOVEM", currentPattern);
-        currentPattern.clear();
+        ArrayList<String> currentPattern9 = new ArrayList<String>();
+        currentPattern9.add("MEM MOVE MEM");
+        patterns.put("MOVEM", currentPattern9);
 
     }
 
@@ -214,7 +214,10 @@ public class Binary_tree {
                 for (int i = 0; i < patterns.get("ADDI").size(); i++) {
                     splited = patterns.get("ADDI").get(i).split(" ");
                     for (int j = 0; j < splited.length; j++) {
-                        if (nodeAux.getValue().equalsIgnoreCase(splited[j])) {
+                        String[] splitedNodeKey = nodeAux.getValue().split(" ");
+                        String nodeKey = splitedNodeKey[0];
+
+                        if (nodeKey.equalsIgnoreCase(splited[j])) {
                             sumNumNodes += 1;
                         } else {
                             sumNumNodes = -1;
@@ -233,13 +236,15 @@ public class Binary_tree {
                 // SUBI
                 splited = patterns.get("SUBI").get(0).split(" ");
                 for (int j = 0; j < splited.length; j++) {
+                    String[] splitedNodeKey = nodeAux.getValue().split(" ");
+                    String nodeKey = splitedNodeKey[0];
                     if (j == 0) {
                         if (nodeAux.getParent().getRight() != nodeAux) {
                             sumNumNodes = -1;
                             break;
                         }
                     }
-                    if (nodeAux.getValue().equalsIgnoreCase(splited[j])) {
+                    if (nodeKey.equalsIgnoreCase(splited[j])) {
                         sumNumNodes += 1;
                     } else {
                         sumNumNodes = -1;
@@ -257,7 +262,9 @@ public class Binary_tree {
                 for (int i = 0; i < patterns.get("LOAD").size() - 1; i++) {
                     splited = patterns.get("LOAD").get(i).split(" ");
                     for (int j = 0; j < splited.length; j++) {
-                        if (nodeAux.getValue().equalsIgnoreCase(splited[j])) {
+                        String[] splitedNodeKey = nodeAux.getValue().split(" ");
+                        String nodeKey = splitedNodeKey[0];
+                        if (nodeKey.equalsIgnoreCase(splited[j])) {
                             sumNumNodes += 1;
                         } else {
                             sumNumNodes = -1;
@@ -277,7 +284,15 @@ public class Binary_tree {
                 for (int i = 0; i < patterns.get("STORE").size() - 1; i++) {
                     splited = patterns.get("STORE").get(i).split(" ");
                     for (int j = 0; j < splited.length; j++) {
-                        if (nodeAux.getValue().equalsIgnoreCase(splited[j])) {
+                        String[] splitedNodeKey = nodeAux.getValue().split(" ");
+                        String nodeKey = splitedNodeKey[0];
+                        if (nodeKey.equalsIgnoreCase(splited[j])) {
+                            if (nodeKey.equalsIgnoreCase("MEM")) {
+                                if (nodeAux.getParent().getLeft() != nodeAux) {
+                                    sumNumNodes = -1;
+                                    break;
+                                }
+                            }
                             sumNumNodes += 1;
                         } else {
                             sumNumNodes = -1;
@@ -293,6 +308,7 @@ public class Binary_tree {
                 numOfNodes.clear();
                 // Fim do STORE
 
+                String choosedKey = "";
                 int indexNumMax = -1;
                 int maxNumNode = 0;
                 ArrayList<Integer> indexCostArr = new ArrayList<Integer>();
@@ -314,7 +330,38 @@ public class Binary_tree {
 
                     indexCostArr.clear();
                     indexNumMax = -1;
-                    maxNumNode = 2147483647;
+                    maxNumNode = 0;
+                }
+
+                // Pegando o melhor padrão para aplicar
+                for (String key : indexCostHash.keySet()) {
+                    if (indexCostHash.get(key).get(1) >= maxNumNode) {
+                        choosedKey = key;
+                        maxNumNode = indexCostHash.get(key).get(1);
+                    }
+                }
+
+                for (int i = 0; i < maxNumNode; i++) {
+                    if (choosedKey.equalsIgnoreCase("ADDI")) {
+                        nodeAux.setPattern("ADDI " + ADDI);
+                    } else if (choosedKey.equalsIgnoreCase("SUBI")) {
+                        nodeAux.setPattern("SUBI " + SUBI);
+                    } else if (choosedKey.equalsIgnoreCase("LOAD")) {
+                        nodeAux.setPattern("LOAD " + LOAD);
+                    } else if (choosedKey.equalsIgnoreCase("STORE")) {
+                        nodeAux.setPattern("STORE " + STORE);
+                    }
+                    nodeAux = node.getParent();
+                }
+
+                if (choosedKey.equalsIgnoreCase("ADDI")) {
+                    ADDI += 1;
+                } else if (choosedKey.equalsIgnoreCase("SUBI")) {
+                    SUBI += 1;
+                } else if (choosedKey.equalsIgnoreCase("LOAD")) {
+                    LOAD += 1;
+                } else if (choosedKey.equalsIgnoreCase("STORE")) {
+                    STORE += 1;
                 }
 
             } else if (keyFromNode.equalsIgnoreCase("MEM")) {
@@ -322,7 +369,9 @@ public class Binary_tree {
                 // LOAD
                 splited = patterns.get("LOAD").get(patterns.get("LOAD").size() - 1).split(" ");
                 for (int j = 0; j < splited.length; j++) {
-                    if (nodeAux.getValue().equalsIgnoreCase(splited[j])) {
+                    String[] splitedNodeKey = nodeAux.getValue().split(" ");
+                    String nodeKey = splitedNodeKey[0];
+                    if (nodeKey.equalsIgnoreCase(splited[j])) {
                         sumNumNodes += 1;
                     } else {
                         sumNumNodes = -1;
@@ -339,7 +388,9 @@ public class Binary_tree {
 
                 // STORE
                 if (nodeAux.getParent() != null) {
-                    if (nodeAux.getParent().getLeft().getValue().equalsIgnoreCase(nodeAux.getValue())) {
+                    String[] splitedNodeKey = nodeAux.getParent().getLeft().getValue().split(" ");
+                    String nodeKey = splitedNodeKey[0];
+                    if (nodeKey.equalsIgnoreCase(nodeAux.getValue())) {
                         sumNumNodes += 1;
                     } else {
                         sumNumNodes = -1;
@@ -351,6 +402,54 @@ public class Binary_tree {
                 nodeAux = node;
                 numOfNodes.clear();
                 // Fim do STORE
+
+                String choosedKey = "";
+                int indexNumMax = -1;
+                int maxNumNode = 0;
+                ArrayList<Integer> indexCostArr = new ArrayList<Integer>();
+                HashMap<String, ArrayList<Integer>> indexCostHash = new HashMap<String, ArrayList<Integer>>();
+
+                // setando melhor index de cada padrão com seu respectivo número de nós
+                for (String key : nodesThrough.keySet()) {
+                    for (int i = 0; i < nodesThrough.get(key).size(); i++) {
+                        if (nodesThrough.get(key).get(i) != -1) {
+                            if (nodesThrough.get(key).get(i) >= maxNumNode) {
+                                indexNumMax = i;
+                                maxNumNode = nodesThrough.get(key).get(i);
+                            }
+                        }
+                    }
+                    indexCostArr.add(indexNumMax);
+                    indexCostArr.add(maxNumNode);
+                    indexCostHash.put(key, indexCostArr);
+
+                    indexCostArr.clear();
+                    indexNumMax = -1;
+                    maxNumNode = 0;
+                }
+
+                // Pegando o melhor padrão para aplicar
+                for (String key : indexCostHash.keySet()) {
+                    if (indexCostHash.get(key).get(1) >= maxNumNode) {
+                        choosedKey = key;
+                        maxNumNode = indexCostHash.get(key).get(1);
+                    }
+                }
+
+                for (int i = 0; i < maxNumNode; i++) {
+                    if (choosedKey.equalsIgnoreCase("LOAD")) {
+                        nodeAux.setPattern("LOAD " + LOAD);
+                    } else if (choosedKey.equalsIgnoreCase("STORE")) {
+                        nodeAux.setPattern("STORE " + STORE);
+                    }
+                    nodeAux = node.getParent();
+                }
+
+                if (choosedKey.equalsIgnoreCase("LOAD")) {
+                    LOAD += 1;
+                } else if (choosedKey.equalsIgnoreCase("STORE")) {
+                    STORE += 1;
+                }
             }
         }
     }
