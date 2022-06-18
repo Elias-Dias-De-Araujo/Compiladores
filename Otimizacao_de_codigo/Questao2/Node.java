@@ -52,4 +52,38 @@ public class Node {
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }
+
+    public void printTreeGraph() {
+        printTreeGraph(this, false, "");
+    }
+
+    private void printTreeGraph(Node node, boolean inLeft, String space) {
+        if (node != null) {
+            String[] splited = node.value.split(" ");
+            if (splited[0].equalsIgnoreCase("CONST") || splited[0].equalsIgnoreCase("TEMP")) {
+                System.out.println(space + (inLeft ? "|-- " : "\\-- ") + node.value);
+            } else {
+                System.out.println(space + (inLeft ? "|-- " : "\\-- ") + node.value);
+            }
+            printTreeGraph(node.left, true, space + (inLeft ? "|   " : "    "));
+            printTreeGraph(node.right, false, space + (inLeft ? "|   " : "    "));
+        }
+    }
+
+    public void printTreeGraphPattern() {
+        printTreeGraphPattern(this, false, "");
+    }
+
+    private void printTreeGraphPattern(Node node, boolean inLeft, String space) {
+        if (node != null) {
+            String[] splited = node.value.split(" ");
+            if (splited[0].equalsIgnoreCase("CONST") || splited[0].equalsIgnoreCase("TEMP")) {
+                System.out.println(space + (inLeft ? "|-- " : "\\-- ") + node.pattern);
+            } else {
+                System.out.println(space + (inLeft ? "|-- " : "\\-- ") + node.pattern);
+            }
+            printTreeGraphPattern(node.left, true, space + (inLeft ? "|   " : "    "));
+            printTreeGraphPattern(node.right, false, space + (inLeft ? "|   " : "    "));
+        }
+    }
 }
