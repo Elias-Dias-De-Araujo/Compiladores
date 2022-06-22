@@ -7,12 +7,9 @@ public class App {
         Scanner scan = new Scanner(file);
         Binary_tree bt = new Binary_tree();
 
-        System.out.println("Print em pos-ordem");
         while (scan.hasNextLine()) {
             bt.setRow(scan.nextLine());
             bt.creatingTree();
-            bt.root.printTreeGraph();
-            bt.root.printTreeGraphPattern();
         }
 
         scan.close();

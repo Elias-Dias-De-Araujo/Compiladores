@@ -9,6 +9,7 @@ public class Binary_tree {
     private int current = 1;
     private ArrayList<String> cutRow = new ArrayList<String>();
     private ArrayList<String> scopes = new ArrayList<String>();
+    private ArrayList<String> selectedPatterns = new ArrayList<String>();
     private HashMap<String, ArrayList<String>> patterns = new HashMap<String, ArrayList<String>>();
 
     public Binary_tree() {
@@ -175,6 +176,8 @@ public class Binary_tree {
         }
 
         posOrder(root);
+        posOrderArr(root);
+        arrangeSelectedPatterns();
     }
 
     public void selectPatterns(Node node) {
@@ -215,6 +218,16 @@ public class Binary_tree {
                     for (int i = 0; i < patterns.get("ADDI").size(); i++) {
                         splited = patterns.get("ADDI").get(i).split(" ");
                         for (int j = 0; j < splited.length; j++) {
+                            if (nodeAux.getPattern() != null) {
+                                sumNumNodes = -1;
+                                break;
+                            }
+                            if ((splited.length - 1) - j != 0) {
+                                if (nodeAux.getParent() == null) {
+                                    sumNumNodes = -1;
+                                    break;
+                                }
+                            }
                             String[] splitedNodeKey = nodeAux.getValue().split(" ");
                             String nodeKey = splitedNodeKey[0];
 
@@ -239,6 +252,16 @@ public class Binary_tree {
                     ArrayList<Integer> numOfNodes = new ArrayList<Integer>();
                     splited = patterns.get("SUBI").get(0).split(" ");
                     for (int j = 0; j < splited.length; j++) {
+                        if (nodeAux.getPattern() != null) {
+                            sumNumNodes = -1;
+                            break;
+                        }
+                        if ((splited.length - 1) - j != 0) {
+                            if (nodeAux.getParent() == null) {
+                                sumNumNodes = -1;
+                                break;
+                            }
+                        }
                         String[] splitedNodeKey = nodeAux.getValue().split(" ");
                         String nodeKey = splitedNodeKey[0];
                         if (j == 0) {
@@ -274,6 +297,16 @@ public class Binary_tree {
                     for (int i = 0; i < patterns.get("LOAD").size() - 1; i++) {
                         splited = patterns.get("LOAD").get(i).split(" ");
                         for (int j = 0; j < splited.length; j++) {
+                            if (nodeAux.getPattern() != null) {
+                                sumNumNodes = -1;
+                                break;
+                            }
+                            if ((splited.length - 1) - j != 0) {
+                                if (nodeAux.getParent() == null) {
+                                    sumNumNodes = -1;
+                                    break;
+                                }
+                            }
                             String[] splitedNodeKey = nodeAux.getValue().split(" ");
                             String nodeKey = splitedNodeKey[0];
                             if (nodeKey.equalsIgnoreCase(splited[j])) {
@@ -299,6 +332,10 @@ public class Binary_tree {
                     for (int i = 0; i < patterns.get("STORE").size() - 1; i++) {
                         splited = patterns.get("STORE").get(i).split(" ");
                         for (int j = 0; j < splited.length; j++) {
+                            if (nodeAux.getPattern() != null) {
+                                sumNumNodes = -1;
+                                break;
+                            }
                             // Tem que fazer isso aqui para todos
                             if ((splited.length - 1) - j != 0) {
                                 if (nodeAux.getParent() == null) {
@@ -394,6 +431,16 @@ public class Binary_tree {
                     ArrayList<Integer> numOfNodes = new ArrayList<Integer>();
                     splited = patterns.get("LOAD").get(patterns.get("LOAD").size() - 1).split(" ");
                     for (int j = 0; j < splited.length; j++) {
+                        if (nodeAux.getPattern() != null) {
+                            sumNumNodes = -1;
+                            break;
+                        }
+                        if ((splited.length - 1) - j != 0) {
+                            if (nodeAux.getParent() == null) {
+                                sumNumNodes = -1;
+                                break;
+                            }
+                        }
                         String[] splitedNodeKey = nodeAux.getValue().split(" ");
                         String nodeKey = splitedNodeKey[0];
                         if (nodeKey.equalsIgnoreCase(splited[j])) {
@@ -416,7 +463,11 @@ public class Binary_tree {
                     ArrayList<Integer> numOfNodes = new ArrayList<Integer>();
                     if (nodeAux.getParent() != null) {
                         if (nodeAux.getParent().getLeft() == nodeAux) {
-                            sumNumNodes += 2;
+                            if (nodeAux.getPattern() != null) {
+                                sumNumNodes = -1;
+                            } else {
+                                sumNumNodes += 2;
+                            }
                         } else {
                             sumNumNodes = -1;
                         }
@@ -480,11 +531,48 @@ public class Binary_tree {
         }
     }
 
+    public void arrangeSelectedPatterns() {
+        ArrayList<String> newSelectedPatterns = new ArrayList<String>();
+        for (int i = 0; i < selectedPatterns.size(); i++) {
+            String value = selectedPatterns.get(i);
+            if (newSelectedPatterns.contains(selectedPatterns.get(i))) {
+                newSelectedPatterns.remove(value);
+            }
+            newSelectedPatterns.add(value);
+        }
+        selectedPatterns.clear();
+        selectedPatterns.addAll(newSelectedPatterns);
+
+        printCostAndPatterns();
+    }
+
+    public void printCostAndPatterns() {
+        String patternsSelecteds = "| ";
+        int cost = 0;
+        for (int i = 0; i < selectedPatterns.size(); i++) {
+            String[] splitedP = selectedPatterns.get(i).split(" ");
+            if (!splitedP[0].equalsIgnoreCase("TEMP")) {
+                cost += 1;
+            }
+            patternsSelecteds += splitedP[0] + " | ";
+        }
+        System.out.println("Padrões selecionados ( pos ordem ): " + patternsSelecteds);
+        System.out.println("Custo total: " + cost);
+    }
+
     public void posOrder(Node current) { // Função responsável por printar a árvore em pre-ordem
         if (current != null) {
             posOrder(current.getLeft());
             posOrder(current.getRight());
             selectPatterns(current);
+        }
+    }
+
+    public void posOrderArr(Node current) {
+        if (current != null) {
+            posOrderArr(current.getLeft());
+            posOrderArr(current.getRight());
+            selectedPatterns.add(current.getPattern());
         }
     }
 
