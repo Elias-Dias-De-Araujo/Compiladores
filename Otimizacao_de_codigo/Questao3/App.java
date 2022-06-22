@@ -10,8 +10,6 @@ public class App {
         while (scan.hasNextLine()) {
             bt.setRow(scan.nextLine());
             bt.creatingTree();
-            bt.root.printTreeGraph();
-            bt.root.printTreeGraphPattern();
         }
 
         scan.close();
