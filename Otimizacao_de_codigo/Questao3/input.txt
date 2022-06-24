@@ -1,1 +1,1 @@
-MOVE ( MEM ( + ( CONST 1 , CONST 2 ) ) , MEM ( TEMP i ) )
+MEM ( + ( CONST 1 , CONST 2 ) )

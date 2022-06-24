@@ -82,6 +82,26 @@ public class Binary_tree {
             int sumQuantSides = 0;
             String[] splited = null;
             String aux = "";
+            if (scopes.isEmpty() && (cutRow.get(current).equalsIgnoreCase("CONST")
+                    || cutRow.get(current).equalsIgnoreCase("TEMP")
+                    || cutRow.get(current).equalsIgnoreCase("FP"))) {
+                if (cutRow.get(current).equalsIgnoreCase("CONST")) {
+                    String getTogether = cutRow.get(current) + " " + cutRow.get(current + 1);
+                    Node newNode = new Node(getTogether);
+                    this.root = newNode;
+                    break;
+                } else if (cutRow.get(current).equalsIgnoreCase("TEMP")) {
+                    String getTogether = cutRow.get(current) + " " + cutRow.get(current + 1);
+                    Node newNode = new Node(getTogether);
+                    this.root = newNode;
+                    break;
+                } else {
+                    String getTogether = cutRow.get(current);
+                    Node newNode = new Node(getTogether);
+                    this.root = newNode;
+                    break;
+                }
+            }
             String reserved = cutRow.get(current);
             if (cutRow.get(current + 1).equals("(")) {
                 reserved = changeReservedName(reserved);
@@ -179,6 +199,8 @@ public class Binary_tree {
 
         posOrder(root);
         posOrderArr(root);
+        root.printTreeGraph();
+        root.printTreeGraphPattern();
         arrangeSelectedPatterns();
     }
 
@@ -544,6 +566,7 @@ public class Binary_tree {
         }
 
         printCode(newSelectedPatterns);
+        printCostAndPatterns(newSelectedPatterns);
     }
 
     public void printCode(ArrayList<String> newSelectedPatterns) {
@@ -581,7 +604,7 @@ public class Binary_tree {
                             }
                         } else if (splitedPAuxRight[0].equalsIgnoreCase("CONST")) {
                             if (!splitedPAuxLeftPattern[0].equalsIgnoreCase("TEMP")) {
-                                lineCode += "r2 + " + splitedPAuxRight[1];
+                                lineCode += "r1 + " + splitedPAuxRight[1];
                             } else {
                                 if (lastNodePattern.getLeft().getValue().equalsIgnoreCase("FP")) {
                                     lineCode += "fp + " + splitedPAuxRight[1];
@@ -601,10 +624,10 @@ public class Binary_tree {
                     String[] splitedPAuxRight = lastNodePattern.getRight().getValue().split(" ");
                     String[] splitedPAuxLeftPattern = lastNodePattern.getLeft().getPattern().split(" ");
                     if (!splitedPAuxLeftPattern[0].equalsIgnoreCase("TEMP")) {
-                        lineCode += "r2 + " + splitedPAuxRight[1];
+                        lineCode += "r1 - " + splitedPAuxRight[1];
                     } else {
                         if (lastNodePattern.getLeft().getValue().equalsIgnoreCase("FP")) {
-                            lineCode += "fp + " + splitedPAuxRight[1];
+                            lineCode += "fp - " + splitedPAuxRight[1];
                         } else {
                             lineCode += "r" + splitedPAuxLeft[1] + " - " + splitedPAuxRight[1];
                         }
@@ -615,7 +638,7 @@ public class Binary_tree {
                     String[] splitedPAuxLeftPattern = lastNodePattern.getLeft().getPattern().split(" ");
                     if (splitedPAuxLeft[0].equalsIgnoreCase("CONST")
                             && lastNodePattern.getLeft().getPattern().equalsIgnoreCase(lastNodePattern.getPattern())) {
-                        lineCode += "r0 " + splitedPAuxLeft[1];
+                        lineCode += "r0 +" + splitedPAuxLeft[1];
                     } else if (splitedPAuxLeft[0].equalsIgnoreCase("+")
                             && lastNodePattern.getLeft().getPattern().equalsIgnoreCase(lastNodePattern.getPattern())) {
                         lastNodePattern = lastNodePattern.getLeft();
@@ -635,7 +658,7 @@ public class Binary_tree {
                             }
                         } else if (splitedPAuxRight[0].equalsIgnoreCase("CONST")) {
                             if (!splitedPAuxLeftPattern[0].equalsIgnoreCase("TEMP")) {
-                                lineCode += "r2 + " + splitedPAuxRight[1];
+                                lineCode += "r1 + " + splitedPAuxRight[1];
                             } else {
                                 if (lastNodePattern.getLeft().getValue().equalsIgnoreCase("FP")) {
                                     lineCode += "fp + " + splitedPAuxRight[1];
@@ -655,7 +678,7 @@ public class Binary_tree {
                     String[] splitedPAuxLeftPattern = lastNodePattern.getLeft().getPattern().split(" ");
                     if (splitedPAuxLeft[0].equalsIgnoreCase("CONST")
                             && lastNodePattern.getLeft().getPattern().equalsIgnoreCase(lastNodePattern.getPattern())) {
-                        lineCode += "r0 " + splitedPAuxLeft[1];
+                        lineCode += "r0 + " + splitedPAuxLeft[1];
                     } else if (splitedPAuxLeft[0].equalsIgnoreCase("+")
                             && lastNodePattern.getLeft().getPattern().equalsIgnoreCase(lastNodePattern.getPattern())) {
                         lastNodePattern = lastNodePattern.getLeft();
@@ -675,7 +698,7 @@ public class Binary_tree {
                             }
                         } else if (splitedPAuxRight[0].equalsIgnoreCase("CONST")) {
                             if (!splitedPAuxLeftPattern[0].equalsIgnoreCase("TEMP")) {
-                                lineCode += "r2 + " + splitedPAuxRight[1];
+                                lineCode += "r1 + " + splitedPAuxRight[1];
                             } else {
                                 if (lastNodePattern.getLeft().getValue().equalsIgnoreCase("FP")) {
                                     lineCode += "fp + " + splitedPAuxRight[1];
