@@ -63,10 +63,10 @@ public class Node {
             if (splited[0].equalsIgnoreCase("CONST") || splited[0].equalsIgnoreCase("TEMP")) {
                 System.out.println(space + (inLeft ? "|-- " : "\\-- ") + node.value);
             } else {
-                System.out.println(space + (inLeft ? "|-- " : "\\-- ") + node.value);
+                System.out.println(space + (inLeft ? "|-- " : "\\-- ") + splited[0]);
             }
-            printTreeGraph(node.left, true, space + (inLeft ? "|   " : "    "));
             printTreeGraph(node.right, false, space + (inLeft ? "|   " : "    "));
+            printTreeGraph(node.left, true, space + (inLeft ? "|   " : "    "));
         }
     }
 
@@ -82,8 +82,8 @@ public class Node {
             } else {
                 System.out.println(space + (inLeft ? "|-- " : "\\-- ") + node.pattern);
             }
-            printTreeGraphPattern(node.left, true, space + (inLeft ? "|   " : "    "));
             printTreeGraphPattern(node.right, false, space + (inLeft ? "|   " : "    "));
+            printTreeGraphPattern(node.left, true, space + (inLeft ? "|   " : "    "));
         }
     }
 }

@@ -199,7 +199,10 @@ public class Binary_tree {
 
         posOrder(root);
         posOrderArr(root);
+        System.out.println("Questao 1: ");
         root.printTreeGraph();
+        System.out.println("----------------------------------");
+        System.out.println("Questao 2: ");
         root.printTreeGraphPattern();
         arrangeSelectedPatterns();
     }
@@ -565,8 +568,10 @@ public class Binary_tree {
             newSelectedPatterns.add(value);
         }
 
-        printCode(newSelectedPatterns);
         printCostAndPatterns(newSelectedPatterns);
+        System.out.println("----------------------------------");
+        System.out.println("Questao 3: ");
+        printCode(newSelectedPatterns);
     }
 
     public void printCode(ArrayList<String> newSelectedPatterns) {
@@ -577,13 +582,89 @@ public class Binary_tree {
                 String lineCode = i + 1 + " " + splitedP[0] + " ";
 
                 if (splitedP[0].equalsIgnoreCase("ADD")) {
-                    lineCode += patternsSimple("+");
+                    String[] splitedPAuxLeft = lastNodePattern.getLeft().getValue().split(" ");
+                    String[] splitedPAuxRight = lastNodePattern.getRight().getValue().split(" ");
+                    String[] splitedPAuxLeftPattern = lastNodePattern.getLeft().getPattern().split(" ");
+                    String[] splitedPAuxRightPattern = lastNodePattern.getRight().getPattern().split(" ");
+
+                    if (splitedPAuxLeftPattern[0].equalsIgnoreCase("TEMP")
+                            && splitedPAuxRightPattern[0].equalsIgnoreCase("TEMP")) {
+                        if (splitedPAuxLeft[0].equalsIgnoreCase("FP") && splitedPAuxRight[0].equalsIgnoreCase("FP")) {
+                            lineCode += currentRegister + " <- fp + fp";
+                        } else if (splitedPAuxLeft[0].equalsIgnoreCase("FP")) {
+                            lineCode += currentRegister + " <- fp + " + splitedPAuxRight[1];
+                        } else if (splitedPAuxRight[0].equalsIgnoreCase("FP")) {
+                            lineCode += currentRegister + " <- fp + " + splitedPAuxLeft[1];
+                        } else {
+                            lineCode += currentRegister + " <- r" + splitedPAuxLeft[1] + " + r"
+                                    + splitedPAuxRight[1];
+                        }
+                    } else {
+                        lineCode += patternsSimple("+");
+                    }
                 } else if (splitedP[0].equalsIgnoreCase("MUL")) {
-                    lineCode += patternsSimple("*");
+                    String[] splitedPAuxLeft = lastNodePattern.getLeft().getValue().split(" ");
+                    String[] splitedPAuxRight = lastNodePattern.getRight().getValue().split(" ");
+                    String[] splitedPAuxLeftPattern = lastNodePattern.getLeft().getPattern().split(" ");
+                    String[] splitedPAuxRightPattern = lastNodePattern.getRight().getPattern().split(" ");
+
+                    if (splitedPAuxLeftPattern[0].equalsIgnoreCase("TEMP")
+                            && splitedPAuxRightPattern[0].equalsIgnoreCase("TEMP")) {
+                        if (splitedPAuxLeft[0].equalsIgnoreCase("FP") && splitedPAuxRight[0].equalsIgnoreCase("FP")) {
+                            lineCode += currentRegister + " <- fp * fp";
+                        } else if (splitedPAuxLeft[0].equalsIgnoreCase("FP")) {
+                            lineCode += currentRegister + " <- fp * " + splitedPAuxRight[1];
+                        } else if (splitedPAuxRight[0].equalsIgnoreCase("FP")) {
+                            lineCode += currentRegister + " <- fp * " + splitedPAuxLeft[1];
+                        } else {
+                            lineCode += currentRegister + " <- r" + splitedPAuxLeft[1] + " * r"
+                                    + splitedPAuxRight[1];
+                        }
+                    } else {
+                        lineCode += patternsSimple("*");
+                    }
                 } else if (splitedP[0].equalsIgnoreCase("SUB")) {
-                    lineCode += patternsSimple("-");
+                    String[] splitedPAuxLeft = lastNodePattern.getLeft().getValue().split(" ");
+                    String[] splitedPAuxRight = lastNodePattern.getRight().getValue().split(" ");
+                    String[] splitedPAuxLeftPattern = lastNodePattern.getLeft().getPattern().split(" ");
+                    String[] splitedPAuxRightPattern = lastNodePattern.getRight().getPattern().split(" ");
+
+                    if (splitedPAuxLeftPattern[0].equalsIgnoreCase("TEMP")
+                            && splitedPAuxRightPattern[0].equalsIgnoreCase("TEMP")) {
+                        if (splitedPAuxLeft[0].equalsIgnoreCase("FP") && splitedPAuxRight[0].equalsIgnoreCase("FP")) {
+                            lineCode += currentRegister + " <- fp - fp";
+                        } else if (splitedPAuxLeft[0].equalsIgnoreCase("FP")) {
+                            lineCode += currentRegister + " <- fp - " + splitedPAuxRight[1];
+                        } else if (splitedPAuxRight[0].equalsIgnoreCase("FP")) {
+                            lineCode += currentRegister + " <- fp - " + splitedPAuxLeft[1];
+                        } else {
+                            lineCode += currentRegister + " <- r" + splitedPAuxLeft[1] + " - r"
+                                    + splitedPAuxRight[1];
+                        }
+                    } else {
+                        lineCode += patternsSimple("-");
+                    }
                 } else if (splitedP[0].equalsIgnoreCase("DIV")) {
-                    lineCode += patternsSimple("/");
+                    String[] splitedPAuxLeft = lastNodePattern.getLeft().getValue().split(" ");
+                    String[] splitedPAuxRight = lastNodePattern.getRight().getValue().split(" ");
+                    String[] splitedPAuxLeftPattern = lastNodePattern.getLeft().getPattern().split(" ");
+                    String[] splitedPAuxRightPattern = lastNodePattern.getRight().getPattern().split(" ");
+
+                    if (splitedPAuxLeftPattern[0].equalsIgnoreCase("TEMP")
+                            && splitedPAuxRightPattern[0].equalsIgnoreCase("TEMP")) {
+                        if (splitedPAuxLeft[0].equalsIgnoreCase("FP") && splitedPAuxRight[0].equalsIgnoreCase("FP")) {
+                            lineCode += currentRegister + " <- fp / fp";
+                        } else if (splitedPAuxLeft[0].equalsIgnoreCase("FP")) {
+                            lineCode += currentRegister + " <- fp / " + splitedPAuxRight[1];
+                        } else if (splitedPAuxRight[0].equalsIgnoreCase("FP")) {
+                            lineCode += currentRegister + " <- fp / " + splitedPAuxLeft[1];
+                        } else {
+                            lineCode += currentRegister + " <- r" + splitedPAuxLeft[1] + " / r"
+                                    + splitedPAuxRight[1];
+                        }
+                    } else {
+                        lineCode += patternsSimple("/");
+                    }
                 } else if (splitedP[0].equalsIgnoreCase("ADDI")) {
                     lineCode += currentRegister + " <- ";
                     String[] splitedPAux;
@@ -638,7 +719,7 @@ public class Binary_tree {
                     String[] splitedPAuxLeftPattern = lastNodePattern.getLeft().getPattern().split(" ");
                     if (splitedPAuxLeft[0].equalsIgnoreCase("CONST")
                             && lastNodePattern.getLeft().getPattern().equalsIgnoreCase(lastNodePattern.getPattern())) {
-                        lineCode += "r0 +" + splitedPAuxLeft[1];
+                        lineCode += "r1 + " + splitedPAuxLeft[1];
                     } else if (splitedPAuxLeft[0].equalsIgnoreCase("+")
                             && lastNodePattern.getLeft().getPattern().equalsIgnoreCase(lastNodePattern.getPattern())) {
                         lastNodePattern = lastNodePattern.getLeft();
@@ -668,7 +749,7 @@ public class Binary_tree {
                             }
                         }
                     } else {
-                        lineCode += "r0";
+                        lineCode += "r1 + 0";
                     }
                     lineCode += "]";
                 } else if (splitedP[0].equalsIgnoreCase("STORE")) {
@@ -678,7 +759,7 @@ public class Binary_tree {
                     String[] splitedPAuxLeftPattern = lastNodePattern.getLeft().getPattern().split(" ");
                     if (splitedPAuxLeft[0].equalsIgnoreCase("CONST")
                             && lastNodePattern.getLeft().getPattern().equalsIgnoreCase(lastNodePattern.getPattern())) {
-                        lineCode += "r0 + " + splitedPAuxLeft[1];
+                        lineCode += "r1 + " + splitedPAuxLeft[1];
                     } else if (splitedPAuxLeft[0].equalsIgnoreCase("+")
                             && lastNodePattern.getLeft().getPattern().equalsIgnoreCase(lastNodePattern.getPattern())) {
                         lastNodePattern = lastNodePattern.getLeft();
@@ -708,7 +789,7 @@ public class Binary_tree {
                             }
                         }
                     } else {
-                        lineCode += "r0";
+                        lineCode += "r1 + 0";
                     }
                     lineCode += "] <- " + currentRegister;
                 }
